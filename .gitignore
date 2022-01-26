@@ -1,0 +1,11 @@
+bin/
+obj/
+
+_work_/
+
+.vscode/
+.ionide/
+.fake/
+
+*.swp
+*.swo
