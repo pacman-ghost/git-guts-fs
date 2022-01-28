@@ -1,0 +1,43 @@
+--- OBJECT 0: commit (fpos=0xc, size=230) --------------------------------------
+
+tree 533b8093315fa1071d9cfb2e1543677bea011f6e
+parent 2cccb4accf4fffcf9f6487a32b16750dfe298cc7
+author Taka <tutorial@git-guts> 1640747973 +0000
+committer Taka <tutorial@git-guts> 1640747973 +0000
+
+Added 2 files in a sub-directory.
+
+--- OBJECT 1: commit (fpos=0xb0, size=166) -------------------------------------
+
+tree 0a890bd10328d68f6d85efd2535e3a4c588ee8e6
+author Taka <tutorial@git-guts> 1640747943 +0000
+committer Taka <tutorial@git-guts> 1640747943 +0000
+
+Added a greeting.
+
+--- OBJECT 2: blob (fpos=0x12a, size=14) ---------------------------------------
+
+Hello, world.
+
+--- OBJECT 3: blob (fpos=0x141, size=16) ---------------------------------------
+
+This is file 1.
+
+--- OBJECT 4: blob (fpos=0x159, size=16) ---------------------------------------
+
+This is file 2.
+
+--- OBJECT 5: tree (fpos=0x171, size=70) ---------------------------------------
+
+100644 f75ba05f340c51065cbea2e1fdbfe5fe13144c97 hello.txt
+040000 f2a25c9255b37fb1e9491349524b532a86701bcc subdir
+
+--- OBJECT 6: tree (fpos=0x1c1, size=74) ---------------------------------------
+
+100644 5c1170f2eaac6f78662a8cf899326a4b95c80dd2 file1.txt
+100644 3eac351c95c4facb0e99d156f14e3527e0f1c3e0 file2.txt
+
+--- OBJECT 7: tree (fpos=0x20c, size=37) ---------------------------------------
+
+100644 f75ba05f340c51065cbea2e1fdbfe5fe13144c97 hello.txt
+

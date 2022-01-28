@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="GitGuts.fs" />
+    <Compile Include="GitObject.fs" />
+    <Compile Include="Pack.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.43.0" />
   </ItemGroup>
 
 </Project>
