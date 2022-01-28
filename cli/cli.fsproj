@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Argu" Version="6.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\git-guts\git-guts.fsproj" />
   </ItemGroup>
 

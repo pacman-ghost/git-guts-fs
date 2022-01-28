@@ -69,3 +69,8 @@ module GitGuts =
         let buf = Array.zeroCreate 4
         inp.Read( buf, 0, 4 ) |> ignore
         ( int(buf.[0]) <<< 24 ) ||| ( int(buf.[1]) <<< 16 ) ||| ( int(buf.[2]) <<< 8 ) ||| int(buf.[3])
+
+    let findRepoPacks repoDir =
+        // find pack files in the git repo
+        let dname = Path.Combine( repoDir, ".git/objects/pack" )
+        Directory.GetFiles( dname, "*.pack" )

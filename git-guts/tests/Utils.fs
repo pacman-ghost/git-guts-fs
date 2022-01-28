@@ -104,8 +104,3 @@ module Utils =
     let runGitGc repoDir =
         // run git garbage collection
         runGit repoDir "gc" [] |> ignore
-
-    let findRepoPacks repoDir =
-        // find pack files in the git repo
-        let dname = Path.Combine( repoDir, ".git/objects/pack" )
-        Directory.GetFiles( dname, "*.pack" )
