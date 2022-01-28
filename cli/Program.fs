@@ -52,6 +52,24 @@ type DumpPackFileCommand() =
         dumpPackFile fname
         0
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type DumpPackObjectSettings() =
+    inherit AppSettings()
+    [<CommandOption( "-f|--pack-file <PACK-FILE>" )>]
+    member val PackFilename = "" with get, set
+    [<CommandOption( "-o|--obj <OBJ-NAME>" )>]
+    member val ObjName = "" with get, set
+
+type DumpPackObjectCommand() =
+    inherit Command<DumpPackObjectSettings>()
+    override this.Execute( ctx, settings ) =
+        if settings.ObjName = "" then
+            failwith "Missing object name."
+        let fname = _getPackFilename settings.PackFilename settings.RepoDir
+        dumpPackObject fname settings.ObjName
+        0
+
 // --------------------------------------------------------------------
 
 [<EntryPoint>]
@@ -69,6 +87,9 @@ let main argv =
         cfg.SetApplicationName( System.AppDomain.CurrentDomain.FriendlyName ) |> ignore
         cfg.AddCommand<DumpPackFileCommand>( "dump-packfile" ).WithDescription(
             "Dump a pack file."
+        ) |> ignore
+        cfg.AddCommand<DumpPackObjectCommand>( "dump-packobject" ).WithDescription(
+            "Dump a pack object."
         ) |> ignore
     )
     app.Run( argv )

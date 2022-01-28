@@ -2,6 +2,7 @@ namespace git_guts
 
 open System
 open System.Text
+open System.IO
 
 open Spectre.Console
 
@@ -39,6 +40,15 @@ module Utils =
     let safeSpectreString (str: string) =
         // escape characters that have meaning for Spectre
         str.Replace( "[", "[[" ).Replace( "]", "]]" )
+
+    let changeExtn (fname: string) newExtn =
+        // change the filename's extension
+        let dirName = Path.GetDirectoryName( fname )
+        let fname2 = Path.GetFileNameWithoutExtension( fname ) + newExtn
+        if dirName = String.Empty then
+            fname2
+        else
+            Path.Join( dirName, fname2 )
 
     let makeHeader (caption: string) (caption2: string) =
         // generate a header string
@@ -79,16 +89,29 @@ module Utils =
             buf.endOfLine
         buf.ToString()
 
-    let blobStr blobData =
+    let blobStr blobData snip =
         // return the blob display string
-        let enc = System.Text.Encoding.GetEncoding( "ASCII", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback )
-        try
-            // try to return the blob as a string
-            enc.GetString( blobData, 0, blobData.Length )
-        with
-            | :? DecoderFallbackException ->
-                // couldn't convert the blob to a string - dump it
-                dumpBytes blobData 0 blobData.Length ""
+        let enc = System.Text.Encoding.GetEncoding( "UTF-8", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback )
+        let textVal =
+            try
+                // try to convert the blob a string
+                enc.GetString( blobData, 0, blobData.Length )
+            with
+                | :? DecoderFallbackException ->
+                    // couldn't convert the blob to a string - dump it
+                    dumpBytes blobData 0 blobData.Length ""
+        // NOTE: If there is a lot of content, we show only the first and last few lines (to avoid
+        // overwhelming the output), but this won't work too well if those lines are very long... :-/
+        let lines = textVal.Split( "\n" )
+        if lines.Length <= 10 || not snip then
+            textVal
+        else
+            let getLines = seq {
+                yield! Seq.take 5 lines
+                yield String.Format( "  ...{0} lines snipped...", lines.Length-8 )
+                yield! lines.[ lines.Length-5 .. lines.Length-1 ]
+            }
+            String.Join( "\n", getLines )
 
     let objNameStr objName =
         // return the object name display string

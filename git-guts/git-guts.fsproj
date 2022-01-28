@@ -10,6 +10,8 @@
     <Compile Include="Utils.fs" />
     <Compile Include="GitGuts.fs" />
     <Compile Include="GitObject.fs" />
+    <Compile Include="PackData.fs" />
+    <Compile Include="PackIndex.fs" />
     <Compile Include="Pack.fs" />
   </ItemGroup>
 

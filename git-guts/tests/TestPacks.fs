@@ -27,15 +27,38 @@ type TestPacks () =
             // locate the pack data file
             let fnames = findRepoPacks gitTestRepo.repoDir
             Assert.AreEqual( 1, fnames.Length )
-            let packFname = fnames.[0]
+            let packDataFname = fnames.[0]
 
             // dump the pack data file
-            use cap = new CaptureStdout()
-            dumpPackFile packFname
-            let expectedFname =
-                let fname = Path.GetFileNameWithoutExtension( zipFname ) + "-pack.txt"
-                Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-            cap.checkOutput expectedFname
+            using ( new CaptureStdout() ) ( fun cap ->
+                dumpPackFile packDataFname
+                let expectedFname =
+                    let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".pack-data.txt"
+                    Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
+                cap.checkOutput expectedFname
+            )
+
+            // dump the pack index file
+            let packIndexFname = changeExtn packDataFname ".idx"
+            using ( new CaptureStdout() ) ( fun cap ->
+                dumpPackFile packIndexFname
+                let expectedFname =
+                    let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".pack-index.txt"
+                    Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
+                cap.checkOutput expectedFname
+            )
+
+            // check that we can find each object name correctly
+            using ( new FileStream( packIndexFname, FileMode.Open, FileAccess.Read, FileShare.Read ) ) ( fun inp ->
+                inp.Seek( int64( 4 + 4 + 4*256 - 4 ), SeekOrigin.Begin ) |> ignore
+                let nObjs = readNboInt inp
+                for objNo = 0 to nObjs-1 do
+                    let objName, _, _ = readPackIndexObject inp objNo nObjs
+                    let obj = readPackObject packDataFname objName
+                    Assert.IsTrue( obj.IsSome )
+            )
 
         // run the tests
         doTest "simple.zip"
+        doTest "license.zip"
+        doTest "full.zip"

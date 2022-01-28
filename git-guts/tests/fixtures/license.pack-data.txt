@@ -1,0 +1,51 @@
+--- OBJECT 0: commit (fpos=0xc, size=214) --------------------------------------
+
+tree 6181490513494f24c4a5e10fcd9d3773f35a8d95
+parent 5455b90ad59476d8b9377880e747f2b0f147d6d5
+author Taka <tutorial@git-guts> 1640761742 +0000
+committer Taka <tutorial@git-guts> 1640761742 +0000
+
+Modified license.
+
+--- OBJECT 1: commit (fpos=0xa6, size=166) -------------------------------------
+
+tree 7a28d3a4c1fea057f83929e1f63e7a0136711cff
+author Taka <tutorial@git-guts> 1640761676 +0000
+committer Taka <tutorial@git-guts> 1640761676 +0000
+
+Original license.
+
+--- OBJECT 2: blob (fpos=0x120, size=34524) ------------------------------------
+
+                    GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+  ...654 lines snipped...
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU AGPL, see
+<https://www.gnu.org/licenses/>.
+!
+--- OBJECT 3: tree (fpos=0x2f1c, size=39) --------------------------------------
+
+100644 803213b6f7528b602e14af3674eda03728b89cd3 LICENSE.txt
+
+--- OBJECT 4: tree (fpos=0x2f4e, size=39) --------------------------------------
+
+100644 be3f7b28e564e7dd05eaf59d64adba1a4065ac0e LICENSE.txt
+
+--- OBJECT 5: blob (fpos=0x2f80, size=34523) -----------------------------------
+
+                    GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+  ...654 lines snipped...
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU AGPL, see
+<https://www.gnu.org/licenses/>.
+
