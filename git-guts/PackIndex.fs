@@ -16,11 +16,10 @@ module PackIndex =
         // NOTE: v1 index files don't have a version number, and just start with the fanout table, but
         // the magic number we check for here is an unreasonable value for fanout[0], so this is how
         // we detect the different versions.
-        let buf = Array.zeroCreate 4
-        inp.Read( buf, 0, 4 ) |> ignore
+        let buf = readBytes inp 4
         if buf <> [|0xffuy; 116uy; 79uy; 99uy|] then // nb: 0xff, then "tOc"
             failwithf "Incorrect magic number: %A" buf
-        let version = readNboInt inp
+        let version = readNboInt4 inp
         if version <> 2 then
             //  NOTE: Version 1 is also valid, but quite old, and we don't support it.
             failwithf "Unsupported pack index version: %d" version
@@ -39,13 +38,13 @@ module PackIndex =
         // read the fanout table
         let byte0 = Int32.Parse( objName.[0..1], Globalization.NumberStyles.AllowHexSpecifier )
         inp.Seek( int64( 4*byte0 ), SeekOrigin.Current ) |> ignore
-        let endIndex = readNboInt inp
+        let endIndex = readNboInt4 inp
         let startIndex =
             if byte0 = 0 then
                 0
             else
                 inp.Seek( -8L, SeekOrigin.Current ) |> ignore
-                readNboInt inp
+                readNboInt4 inp
         // NOTE: We now have two indexes into the table of object names:
         // - startIndex = index of an object name <= the name we're looking for
         // - endIndex = index of an object name > the name we're looking for
@@ -67,9 +66,9 @@ module PackIndex =
                 if midObjName = objName then
                     // yup - get the object's offset in the pack data
                     seekTo ( fposNames - 4 )
-                    let nObjs = readNboInt inp // nb: this is the last value in the fanout table
+                    let nObjs = readNboInt4 inp // nb: this is the last value in the fanout table
                     seekTo ( fposNames + 20*nObjs + 4*nObjs + 4*midIndex )
-                    Some ( readNboInt inp )
+                    Some ( readNboInt4 inp )
                 else
                     // nope - continue the binary search
                     if midObjName < objName then
@@ -92,9 +91,9 @@ module PackIndex =
         seekTo fposNames 20 objNo
         let objName = readObjName inp
         seekTo fposCrcs 4 objNo
-        let crc = readNboInt inp
+        let crc = readNboInt4 inp
         seekTo fposOffsets 4 objNo
-        let offset = readNboInt inp
+        let offset = readNboInt4 inp
         if offset &&& 0x80000000 <> 0 then
             failwithf "Large offsets are not supported."
 
@@ -109,7 +108,7 @@ module PackIndex =
         let version = _readPackIndexHeader inp
 
         // read the fanout table
-        let getFanoutVals = Seq.initInfinite (fun n -> readNboInt inp)
+        let getFanoutVals = Seq.initInfinite (fun n -> readNboInt4 inp)
         let fanout = Seq.take 256 getFanoutVals |> Seq.toArray
         let nObjs = fanout.[255]
 

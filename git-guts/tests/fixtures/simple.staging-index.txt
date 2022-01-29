@@ -1,0 +1,42 @@
+--- HEADER ---------------------------------------------------------------------
+
+version: 2
+entries: 3
+
+--- ENTRIES --------------------------------------------------------------------
+
+Entry 0: fpos=0xc
+- path:  hello.txt
+- name:  f75ba05f340c51065cbea2e1fdbfe5fe13144c97
+- flags: stage=0, namelen=9 (0x0009)
+- type:  regular file (8)
+- size:  14
+- perms: rw-r--r-- (0x1a4)
+
+Entry 1: fpos=0x54
+- path:  subdir/file1.txt
+- name:  5c1170f2eaac6f78662a8cf899326a4b95c80dd2
+- flags: stage=0, namelen=16 (0x0010)
+- type:  regular file (8)
+- size:  16
+- perms: rw-r--r-- (0x1a4)
+
+Entry 2: fpos=0xa4
+- path:  subdir/file2.txt
+- name:  3eac351c95c4facb0e99d156f14e3527e0f1c3e0
+- flags: stage=0, namelen=16 (0x0010)
+- type:  regular file (8)
+- size:  16
+- perms: rw-r--r-- (0x1a4)
+
+--- EXTENSIONS -----------------------------------------------------------------
+
+TREE: fpos=0xf4, #bytes=56
+- path = (empty)
+  - entries:  3
+  - subtrees: 1
+  - name:     533b8093315fa1071d9cfb2e1543677bea011f6e
+- path = subdir
+  - entries:  2
+  - subtrees: 0
+  - name:     f2a25c9255b37fb1e9491349524b532a86701bcc

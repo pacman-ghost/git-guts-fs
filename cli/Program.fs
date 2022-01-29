@@ -85,6 +85,19 @@ type DumpPackObjectCommand() =
         dumpPackObject fname settings.ObjName
         0
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type DumpStagingIndexSettings() =
+    inherit AppSettings()
+    [<CommandOption( "-f|--full" )>]
+    member val FullDump = false with get, set
+
+type DumpStagingIndexCommand() =
+    inherit Command<DumpStagingIndexSettings>()
+    override this.Execute( ctx, settings ) =
+        dumpStagingIndex settings.RepoDir settings.FullDump
+        0
+
 // --------------------------------------------------------------------
 
 [<EntryPoint>]
@@ -108,6 +121,9 @@ let main argv =
         ) |> ignore
         cfg.AddCommand<DumpPackObjectCommand>( "dump-packobject" ).WithDescription(
             "Dump a pack object."
+        ) |> ignore
+        cfg.AddCommand<DumpStagingIndexCommand>( "dump-stagingindex" ).WithDescription(
+            "Dump the staging index."
         ) |> ignore
     )
     app.Run( argv )

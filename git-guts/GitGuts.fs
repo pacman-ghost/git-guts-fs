@@ -26,8 +26,7 @@ module GitGuts =
             // FUDGE! In Python, we ask zlib to decompress bytes from the stream until it's done, but in .NET,
             // we have to tell it how many bytes of uncompressed data we want, which doesn't seem to work when
             // the byte count is 0 :-/ I'm not sure if skipping bytes like this is right, but it'll do for now...
-            for i = 0 to 5 do
-                inp.ReadByte() |> ignore
+            readBytes inp 6 |> ignore
             [||]
         else
             use zstream = new DeflateStream( inp, CompressionMode.Decompress, true )
@@ -82,15 +81,17 @@ module GitGuts =
 
     let readObjName (inp: Stream) =
         // read an object name (20 raw bytes) and return it as a hex-string
-        let buf = Array.zeroCreate 20
-        inp.Read( buf, 0, 20 ) |> ignore
+        let buf = readBytes inp 20
         Convert.ToHexString( buf ).ToLower()
 
-    let readNboInt (inp: Stream) =
+    let _readNboInt (inp: Stream) nBytes =
         // read a network-byte-order int
-        let buf = Array.zeroCreate 4
-        inp.Read( buf, 0, 4 ) |> ignore
-        ( int(buf.[0]) <<< 24 ) ||| ( int(buf.[1]) <<< 16 ) ||| ( int(buf.[2]) <<< 8 ) ||| int(buf.[3])
+        let getBytes = Seq.initInfinite ( fun n -> inp.ReadByte() )
+        let foldByte acc byt =
+            ( acc <<< 8 ) ||| int( byt )
+        Seq.take nBytes getBytes |> Seq.fold foldByte 0
+    let readNboInt4 (inp: Stream) = _readNboInt inp 4
+    let readNboInt2 (inp: Stream) = _readNboInt inp 2
 
     let readVliBe (inp: Stream) isOffsetEncoding =
         // read a variable-length integer (big-endian)

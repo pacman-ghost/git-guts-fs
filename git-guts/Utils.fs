@@ -122,3 +122,33 @@ module Utils =
         match path with
             | "" -> "(empty)"
             | _ -> "[green]" + (if path.Substring(0,2) = "./" then path.Substring(2) else path) + "[/]"
+
+    let bitflagString (flags: uint) nBytes (flagNames: Map<uint,string>) =
+        // convert the bitflags to a formatted string
+        let fmt = sprintf "0x{0:x%d}" (2 * nBytes)
+        let flagsStr = String.Format( fmt, flags )
+        let checkBitflag (bflag, flagName) =
+            flags &&& bflag <> 0u
+        let fnames = Map.toSeq flagNames |> Seq.filter checkBitflag |> Seq.map snd |> Seq.toArray
+        if fnames.Length = 0 then
+            flagsStr
+        else
+            sprintf "%s (%s)" (String.Join( ", ", fnames )) flagsStr
+
+    let permsString (perms: uint16) =
+        // convert the file permission flags to a formatted string
+        let permNames = "rwxrwxrwx"
+        let permsStr = String.Join( "", seq {
+            for flagNo = 0 to permNames.Length-1 do
+                let bmask = uint16( 1 <<< (8 - flagNo) )
+                yield if perms &&& bmask <> 0us then permNames.[flagNo] else '-'
+        } )
+        sprintf "%s (0x%x)" permsStr perms
+
+    let readBytes (inp: Stream) nBytes =
+        // read the specified number of bytes from the stream
+        let buf = Array.zeroCreate nBytes
+        let nBytesRead = inp.Read( buf, 0, nBytes )
+        if nBytesRead <> nBytes then
+            failwithf "Unexpected number of bytes read: %d/%d" nBytesRead nBytes
+        buf

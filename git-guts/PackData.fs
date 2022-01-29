@@ -14,14 +14,13 @@ module PackData =
     let private _readPackDataHeader (inp: Stream) =
 
         // read the header
-        let buf = Array.zeroCreate 4
-        inp.Read( buf, 0, 4 ) |> ignore
+        let buf = readBytes inp 4
         if (Encoding.ASCII.GetString buf) <> "PACK" then
             failwithf "Incorrect magic number: %A" buf
-        let version = readNboInt inp
+        let version = readNboInt4 inp
         if version <> 2 then
             failwithf "Unsupported pack file version: %d" version
-        let nObjs = readNboInt inp
+        let nObjs = readNboInt4 inp
 
         ( version, nObjs )
 
@@ -58,8 +57,7 @@ module PackData =
                 else
                     // add new data
                     let nBytes = byt &&& 0x7f
-                    let buf = Array.zeroCreate nBytes
-                    tdataStream.Read( buf, 0, nBytes ) |> ignore
+                    let buf = readBytes tdataStream nBytes
                     yield! buf
                     yield! getBytes()
         }

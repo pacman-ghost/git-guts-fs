@@ -51,7 +51,7 @@ type TestPacks () =
             // check that we can find each object name correctly
             using ( new FileStream( packIndexFname, FileMode.Open, FileAccess.Read, FileShare.Read ) ) ( fun inp ->
                 inp.Seek( int64( 4 + 4 + 4*256 - 4 ), SeekOrigin.Begin ) |> ignore
-                let nObjs = readNboInt inp
+                let nObjs = readNboInt4 inp
                 for objNo = 0 to nObjs-1 do
                     let objName, _, _ = readPackIndexObject inp objNo nObjs
                     let obj = findRepoObject gitTestRepo.repoDir objName
