@@ -8,7 +8,7 @@ open System.Collections.Generic
 [<AutoOpen>]
 module Pack =
 
-    let dumpPackFile fname =
+    let internal _dumpPackFile fname findRepoObjRecFunc =
 
         // initialize
         if not ( File.Exists fname ) then
@@ -17,13 +17,13 @@ module Pack =
         // figure out what to do
         let extn = Path.GetExtension( fname ).ToLower()
         if extn = ".pack" then
-            _dumpPackDataFile fname
+            _dumpPackDataFile fname findRepoObjRecFunc
         else if extn = ".idx" then
             _dumpPackIndexFile fname
         else
             failwithf "Unknown pack file extension: %s" extn
 
-    let readPackObject fname objName :GitObject option =
+    let _readPackObjRec fname objName findRepoObjRecFunc =
         let fpos = _findObjInPack fname objName
         if fpos.IsNone then
             None
@@ -32,17 +32,24 @@ module Pack =
             let fname2 = changeExtn fname ".pack"
             use inp = new FileStream( fname2, FileMode.Open, FileAccess.Read, FileShare.Read )
             inp.Seek( int64( fpos.Value ), SeekOrigin.Begin ) |> ignore
-            let objType, objData, fpos2 = _readPackObject inp
-            Some ( makeGitObject objType objData )
+            let objRec, fpos2 = _readPackObjRec inp findRepoObjRecFunc
+            Some objRec
 
-    let dumpPackObject fname objName =
+    let readPackObject fname objName findRepoObjRecFunc :GitObject option =
+        let objRec = _readPackObjRec fname objName findRepoObjRecFunc
+        if objRec.IsNone then
+            None
+        else
+            Some ( makeGitObject objRec.Value )
+
+    let _dumpPackObject fname objName findRepoObjRecFunc =
 
         // initialize
         if not ( File.Exists fname ) then
             failwithf "Can't find pack file: %s" fname
 
         // find the specified pack object
-        let obj = readPackObject fname objName
+        let obj = readPackObject fname objName findRepoObjRecFunc
         if obj.IsNone then
             failwith "Object not found."
         obj.Value.dumpObj()

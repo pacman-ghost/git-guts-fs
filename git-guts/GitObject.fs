@@ -92,14 +92,28 @@ type TagGitObject( objData ) =
 
 // --------------------------------------------------------------------
 
+// This is used to hold the raw data for objects extracted from a pack.
+type ObjRec = {
+    objType: int
+    objData: byte[]
+}
+
 [<AutoOpen>]
 module GitObject =
 
-    let makeGitObject objType objData =
+    let makeGitObject objRec =
         // create a GitObject-derived object
+        match objRec.objType with
+        | 1 -> (CommitGitObject objRec.objData) :> GitObject
+        | 2 -> (TreeGitObject objRec.objData) :> GitObject
+        | 3 -> (BlobGitObject objRec.objData) :> GitObject
+        | 4 -> (TagGitObject objRec.objData) :> GitObject
+        | _ -> failwithf "Unknown object type: %d" objRec.objType
+
+    let parseObjType objType =
         match objType with
-        | 1 -> (CommitGitObject objData) :> GitObject
-        | 2 -> (TreeGitObject objData) :> GitObject
-        | 3 -> (BlobGitObject objData) :> GitObject
-        | 4 -> (TagGitObject objData) :> GitObject
-        | _ -> failwithf "Unknown object type: %d" objType
+        | "commit" -> 1
+        | "tree" -> 2
+        | "blob" -> 3
+        | "tag" -> 4
+        | _ -> failwithf "Unknown object type: %s" objType

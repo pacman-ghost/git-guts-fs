@@ -53,6 +53,16 @@ module GitGuts =
 
             buf
 
+    let decompressEntireStream (inp: Stream) =
+        // skip the header
+        inp.ReadByte() |> ignore
+        inp.ReadByte() |> ignore
+        // decompress the rest of the input stream
+        use zstream = new DeflateStream( inp, CompressionMode.Decompress )
+        use buf = new MemoryStream()
+        zstream.CopyTo( buf )
+        buf.ToArray()
+
     let readUntil (inp: Stream) (endByte: byte) =
         // read bytes until the specified end byte is seen
         let rec readBytes () = seq {

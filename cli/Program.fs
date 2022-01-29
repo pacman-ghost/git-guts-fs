@@ -40,6 +40,21 @@ type AppCommand() =
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+type DumpRepoObjectSettings() =
+    inherit AppSettings()
+    [<CommandOption( "-o|--obj <OBJ-NAME>" )>]
+    member val ObjName = "" with get, set
+
+type DumpRepoObjectCommand() =
+    inherit Command<DumpRepoObjectSettings>()
+    override this.Execute( ctx, settings ) =
+        if settings.ObjName = "" then
+            failwith "Missing object name."
+        dumpRepoObject settings.RepoDir settings.ObjName
+        0
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 type DumpPackFileSettings() =
     inherit AppSettings()
     [<CommandOption( "-f|--pack-file <PACK-FILE>" )>]
@@ -85,6 +100,9 @@ let main argv =
     let app = CommandApp<AppCommand>()
     app.Configure( fun cfg ->
         cfg.SetApplicationName( System.AppDomain.CurrentDomain.FriendlyName ) |> ignore
+        cfg.AddCommand<DumpRepoObjectCommand>( "dump-object" ).WithDescription(
+            "Dump an object in a git repo."
+        ) |> ignore
         cfg.AddCommand<DumpPackFileCommand>( "dump-packfile" ).WithDescription(
             "Dump a pack file."
         ) |> ignore

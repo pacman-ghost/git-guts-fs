@@ -69,7 +69,7 @@ module PackData =
 
         objData
 
-    let rec internal _readPackObject (inp: Stream) =
+    let rec internal _readPackObjRec (inp: Stream) findRepoObjRecFunc =
 
         // remember where the object starts in the pack data
         let fpos = inp.Position
@@ -91,23 +91,21 @@ module PackData =
         let objSize = getShiftedBytes (byt &&& 0x8F) 0 |> Seq.fold foldShiftedByte 0
 
         // read the object data
-        let mutable objType2 = -1
-        let mutable objData = null
-        let obj =
+        let objRec =
             match objType with
             | 1 | 2 | 3 | 4 -> // commit, tree, blob, tag
-                objData <- decompressStream inp objSize
-                objType2 <- objType
+                let objData = decompressStream inp objSize
+                { objType=objType; objData=objData }
             | 6 -> // ofs_delta
-                let deltaObjAndType = _readOfsDeltaObj inp fpos objSize
-                objData <- snd deltaObjAndType
-                objType2 <- fst deltaObjAndType
+                _readOfsDeltaObjRec inp fpos objSize findRepoObjRecFunc
+            | 7 -> // ref_delta
+                _readRefDeltaObjRec inp fpos objSize findRepoObjRecFunc
             | _ ->
                 failwithf "Unknown object type: %d" objType
 
-        ( objType2, objData, fpos )
+        ( objRec, fpos )
 
-    and private _readOfsDeltaObj (inp: Stream) fpos objSize =
+    and private _readOfsDeltaObjRec (inp: Stream) fpos objSize findRepoObjRecFunc =
 
         // read the base object offset
         let offset = int64( readVliBe inp true )
@@ -117,24 +115,43 @@ module PackData =
         // IMPORTANT: The base object could itself be delta'fied.
         let prevPos = inp.Position
         inp.Seek( baseObjOffset, SeekOrigin.Begin ) |> ignore
-        let baseObjType, baseObjData, fpos = _readPackObject inp
+        let baseObjRec, fpos = _readPackObjRec inp findRepoObjRecFunc
         inp.Seek( prevPos, SeekOrigin.Begin ) |> ignore
 
         // reconstruct the delta'fied object
-        let objData = _makeDeltaObj inp baseObjData objSize
+        let objData = _makeDeltaObj inp baseObjRec.objData objSize
 
-        ( baseObjType, objData )
+        { objType=baseObjRec.objType; objData=objData }
 
-    let private _readPackObjects (inp: Stream) = seq {
+    and private _readRefDeltaObjRec (inp: Stream) fpos objSize (findRepoObjRecFunc: string -> string -> ObjRec option) =
+
+        // read the base object name
+        let baseObjName = readObjName inp
+
+        // get the base object
+        let fstream = inp :?> FileStream // NOTE: REF_DELTA's will only work with repo's stored on disk.
+        let dname = Path.GetDirectoryName( fstream.Name )
+        let repoDir = Path.GetFullPath( Path.Join( dname, "../../.." ) )
+        // FUDGE! The algorithm for reconstructing objects from base object(s) is inherently recursive,
+        // and since there isn't a way to forward declare a function, everyone has to pass around
+        // a reference to the _findRepoObjRec function, so that we can use it here :-/
+        let baseObjRec = findRepoObjRecFunc repoDir baseObjName
+
+        // reconstruct the delta'fied object
+        let objData = _makeDeltaObj inp baseObjRec.Value.objData objSize
+
+        { objType=baseObjRec.Value.objType; objData=objData }
+
+    let private _readPackObjects (inp: Stream) findRepoObjRecFunc = seq {
         // read each object
         let endPos = inp.Length - 20L // nb: we ignore the 20-byte checksum at the end
         while inp.Position < endPos do
-            let objType, objData, fpos = _readPackObject inp
-            let obj = makeGitObject objType objData
-            yield obj, fpos, objData
+            let objRec, fpos = _readPackObjRec inp findRepoObjRecFunc
+            let obj = makeGitObject objRec
+            yield obj, objRec, fpos
     }
 
-    let internal _dumpPackDataFile fname =
+    let internal _dumpPackDataFile fname findRepoObjRecFunc =
 
         // initialize
         use inp = new FileStream( fname, FileMode.Open, FileAccess.Read, FileShare.Read )
@@ -143,11 +160,11 @@ module PackData =
         let version, nObjs = _readPackDataHeader inp
 
         // dump each object
-        _readPackObjects inp |> Seq.iteri ( fun objNo row ->
-            let obj, fpos, objData = row
+        _readPackObjects inp findRepoObjRecFunc |> Seq.iteri ( fun objNo row ->
+            let obj, objRec, fpos = row
             AnsiConsole.MarkupLine( makeHeader
                 ( sprintf "OBJECT %d: %s" objNo obj.objType )
-                ( sprintf "(fpos=0x%x, size=%d)" fpos objData.Length )
+                ( sprintf "(fpos=0x%x, size=%d)" fpos objRec.objData.Length )
             )
             printfn ""
             obj.dumpObj()

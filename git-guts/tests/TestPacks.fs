@@ -54,7 +54,7 @@ type TestPacks () =
                 let nObjs = readNboInt inp
                 for objNo = 0 to nObjs-1 do
                     let objName, _, _ = readPackIndexObject inp objNo nObjs
-                    let obj = readPackObject packDataFname objName
+                    let obj = findRepoObject gitTestRepo.repoDir objName
                     Assert.IsTrue( obj.IsSome )
             )
 

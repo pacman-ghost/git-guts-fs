@@ -13,6 +13,7 @@
     <Compile Include="PackData.fs" />
     <Compile Include="PackIndex.fs" />
     <Compile Include="Pack.fs" />
+    <Compile Include="GitRepo.fs" />
   </ItemGroup>
 
   <ItemGroup>
