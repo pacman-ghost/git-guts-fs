@@ -14,7 +14,7 @@ type TestRefs () =
     [<TestInitialize>]
     member this.init () =
         // prepare to run a test
-        disableSpectreCapabilities
+        disableSpectreCapabilities ()
 
     [<TestMethod>]
     member this.TestDumpRefs () =
@@ -30,7 +30,7 @@ type TestRefs () =
                 let expectedFname =
                     let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".refs.txt"
                     Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-                cap.checkOutput expectedFname
+                checkCapturedOutput cap expectedFname
             )
 
             // move the loose objects to a pack, and check again
@@ -40,7 +40,7 @@ type TestRefs () =
                 let expectedFname =
                     let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".refs-packed.txt"
                     Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-                cap.checkOutput expectedFname
+                checkCapturedOutput cap expectedFname
             )
 
         // run the tests

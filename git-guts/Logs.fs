@@ -40,7 +40,7 @@ type LogEntry =
 [<AutoOpen>]
 module Logs =
 
-    let private _findLogFiles repoDir = seq {
+    let internal _findLogFiles repoDir = seq {
         // find log files in the specified repo
         let dname = Path.Join( repoDir, "/.git/logs" )
         if Directory.Exists( dname ) then
@@ -52,7 +52,7 @@ module Logs =
                 yield ref, fname
     }
 
-    let private _readLogFile fname = seq {
+    let internal _readLogFile fname = seq {
         let regex = Regex( @"^([0-9a-f]{40}) ([0-9a-f]{40}) (.+?) \<(.+?)\> (\d+) ([+-]\d{4})(\s+[^:]+)?" )
         for line in File.ReadLines( fname ) do
             let line2 = line.Trim()

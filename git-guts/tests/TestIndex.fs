@@ -14,7 +14,7 @@ type TestStagingIndex () =
     [<TestInitialize>]
     member this.init () =
         // prepare to run a test
-        disableSpectreCapabilities
+        disableSpectreCapabilities ()
 
     [<TestMethod>]
     member this.TestDumpStagingIndex () =

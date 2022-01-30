@@ -4,10 +4,11 @@ open System
 open System.Text
 open System.IO
 open System.IO.Compression
-open System.Diagnostics
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
 open Spectre.Console
+
+open git_guts
 
 // --------------------------------------------------------------------
 
@@ -49,58 +50,16 @@ type GitTestRepo ( zipFname ) =
 
 // --------------------------------------------------------------------
 
-type CaptureStdout () =
-    // Temporarily capture output sent to stdout.
+[<AutoOpen>]
+module Utils =
 
-    // set up a buffer to capture stdout
-    let _writer = new StringWriter()
-    let _prevOut = System.Console.Out
-    let _prevAnsiConsole = AnsiConsole.Console.Profile.Out
-    do
-        System.Console.SetOut( _writer )
-        AnsiConsole.Console.Profile.Out <- new AnsiConsoleOutput( _writer )
-
-    interface IDisposable with
-        member this.Dispose() =
-            // clean up
-            System.Console.SetOut( _prevOut )
-            AnsiConsole.Console.Profile.Out <- _prevAnsiConsole
-            _writer.Dispose()
-
-    member this.checkOutput fname =
+    let checkCapturedOutput (cap: CaptureStdout) fname =
         // compare the captured output with what's expected
         let expected = File.ReadAllText( fname, Encoding.UTF8 )
-        let output = this.getOutput
+        let output = cap.getOutput
         if output <> expected then
             let fname2 = Path.Combine( Path.GetTempPath(), "captured-output.txt" )
             File.WriteAllText( fname2, output, Encoding.UTF8 )
             Assert.Fail(
                 sprintf "Captured output`mismatch: %s" ( Path.GetFileName( fname ) )
             )
-
-    member this.getOutput =
-        // return the captured output
-        _writer.ToString()
-
-// --------------------------------------------------------------------
-
-[<AutoOpen>]
-module Utils =
-
-    let runGit repoDir cmd args =
-        // run git and capture the output
-        let gitPath = "git" // nb: we assume this is on the PATH
-        let gitDir = Path.Combine( repoDir, ".git" )
-        let startInfo = ProcessStartInfo( FileName=gitPath, RedirectStandardOutput=true, UseShellExecute=false )
-        let addArg arg = startInfo.ArgumentList.Add( arg )
-        Seq.iter addArg [| "--git-dir"; gitDir; cmd |]
-        Seq.iter addArg args
-        let proc = Process.Start( startInfo )
-        let output = proc.StandardOutput.ReadToEnd()
-        proc.WaitForExit()
-        Assert.AreEqual( 0, proc.ExitCode )
-        output
-
-    let runGitGc repoDir =
-        // run git garbage collection
-        runGit repoDir "gc" [] |> ignore

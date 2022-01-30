@@ -2,6 +2,7 @@ namespace git_guts
 
 open System.IO
 open System.Text
+open System.Text.RegularExpressions
 open System.Collections.Generic
 
 // --------------------------------------------------------------------
@@ -59,6 +60,29 @@ module GitRepo =
         if obj.IsNone then
             failwith "Object not found."
         obj.Value.dumpObj()
+
+    let getObjNames repoDir = seq {
+
+        // return all loose objects in the repo
+        let dname = Path.Join( repoDir, ".git/objects" )
+        let regex = Regex( @"/([0-9a-f]{2})/([0-9a-f]{38}$)" )
+        for fname in Directory.GetFiles( dname, "*", SearchOption.AllDirectories ) do
+            let fname2 = fname.Replace( Path.DirectorySeparatorChar, '/' )
+            let matches = regex.Matches( fname2 )
+            if matches.Count > 0 then
+                let groups = matches.[0].Groups
+                let objName = groups.[1].Value + groups.[2].Value
+                yield objName, fname2
+
+        // return all objects in each pack
+        for fname in findRepoPacks repoDir do
+            let mutable objs = [] // FUDGE! Can't yield from inside the onObject callback :-/
+            _readPackIndexFile fname ( fun fanout -> () ) ( fun objNo nObjs objName crc offset ->
+                objs <- objs @ [ ( objName, fname ) ]
+            )
+            yield! objs
+
+    }
 
     let dumpPackFile fname =
         // FUDGE! This is a wrapper function that passes in the recursively-called _findRepoObjRec function :-/

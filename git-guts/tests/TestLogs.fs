@@ -14,7 +14,7 @@ type TestLogs () =
     [<TestInitialize>]
     member this.init () =
         // prepare to run a test
-        disableSpectreCapabilities
+        disableSpectreCapabilities ()
 
     [<TestMethod>]
     member this.TestDumpLogs () =
@@ -30,8 +30,9 @@ type TestLogs () =
                 let expectedFname =
                     let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".logs.txt"
                     Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-                cap.checkOutput expectedFname
+                checkCapturedOutput cap expectedFname
             )
+
         // run the tests
         doTest "empty.zip"
         doTest "simple.zip"

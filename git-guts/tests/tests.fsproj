@@ -12,6 +12,7 @@
     <Compile Include="TestPacks.fs" />
     <Compile Include="TestRefs.fs" />
     <Compile Include="TestLogs.fs" />
+    <Compile Include="TestVerify.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

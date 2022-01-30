@@ -99,10 +99,11 @@ module PackIndex =
 
         ( objName, crc, offset )
 
-    let internal _dumpPackIndexFile fname =
+    let internal _readPackIndexFile fname onFanoutTable onObject =
 
         // initialize
-        use inp = new FileStream( fname, FileMode.Open, FileAccess.Read, FileShare.Read )
+        let fname2 = changeExtn fname ".idx"
+        use inp = new FileStream( fname2, FileMode.Open, FileAccess.Read, FileShare.Read )
 
         // read the header
         let version = _readPackIndexHeader inp
@@ -110,44 +111,60 @@ module PackIndex =
         // read the fanout table
         let getFanoutVals = Seq.initInfinite (fun n -> readNboInt4 inp)
         let fanout = Seq.take 256 getFanoutVals |> Seq.toArray
+        onFanoutTable fanout
         let nObjs = fanout.[255]
 
-        // dump the fanout table header
-        AnsiConsole.MarkupLine( "{0}", makeHeader "FANOUT" "" )
-        printfn ""
-        let fieldWidth = Math.Max( String.Format( "{0}", nObjs ).Length, 2 )
-        let fmt = String.Format( "{{0,{0}}}", fieldWidth )
-        printf "   "
-        for col = 0 to 15 do
-            let iVal = String.Format( "{0:x2}", col )
-            printf " %s" ( String.Format( fmt, iVal ) )
-        printfn ""
-        printf "   "
-        for col = 0 to 15 do
-            let ruler = String( '-', fieldWidth )
-            printf " %s" ruler
-        printfn ""
-
-        // dump the fanout table
-        for row = 0 to 15 do
-            printf "%02x:" (16 * row)
-            for col = 0 to 15 do
-                let fanoutVal = String.Format( fmt, fanout.[16*row+col] )
-                printf " %s" fanoutVal
-            printfn ""
-
         // dump the objects
-        let fieldWidth2 = String.Format( "{0}", nObjs ).Length
-        printfn ""
-        let hdr = sprintf "OBJECTS (%d)" nObjs
-        AnsiConsole.MarkupLine( "{0}", makeHeader hdr "" )
-        printfn ""
-        let prefix = String( ' ', fieldWidth2 )
-        printfn "%s  name                                     crc      offset" prefix
-        printfn "%s  ---------------------------------------- -------- --------" prefix
-        let fmt = sprintf "{0,%d}: {1} {2:x8} 0x{3:x}" fieldWidth2
         for objNo = 0 to nObjs-1 do
             let objName, crc, offset = readPackIndexObject inp objNo nObjs
+            onObject objNo nObjs objName crc offset
+
+    let internal _dumpPackIndexFile fname =
+
+        _readPackIndexFile fname ( fun fanout ->
+
+            // dump the fanout table header
+            AnsiConsole.MarkupLine( "{0}", makeHeader "FANOUT" "" )
+            printfn ""
+            let nObjs = fanout.[255]
+            let fieldWidth = Math.Max( String.Format( "{0}", nObjs ).Length, 2 )
+            let fmt = String.Format( "{{0,{0}}}", fieldWidth )
+            printf "   "
+            for col = 0 to 15 do
+                let iVal = String.Format( "{0:x2}", col )
+                printf " %s" ( String.Format( fmt, iVal ) )
+            printfn ""
+            printf "   "
+            for col = 0 to 15 do
+                let ruler = String( '-', fieldWidth )
+                printf " %s" ruler
+            printfn ""
+
+            // dump the fanout table
+            for row = 0 to 15 do
+                printf "%02x:" (16 * row)
+                for col = 0 to 15 do
+                    let fanoutVal = String.Format( fmt, fanout.[16*row+col] )
+                    printf " %s" fanoutVal
+                printfn ""
+
+        ) ( fun objNo nObjs objName crc offset ->
+
+            let fieldWidth = String.Format( "{0}", nObjs ).Length
+
+            if objNo = 0 then
+                // output the header
+                printfn ""
+                let hdr = sprintf "OBJECTS (%d)" nObjs
+                AnsiConsole.MarkupLine( "{0}", makeHeader hdr "" )
+                printfn ""
+                let prefix = String( ' ', fieldWidth )
+                printfn "%s  name                                     crc      offset" prefix
+                printfn "%s  ---------------------------------------- -------- --------" prefix
+
+            // dump the next object
+            let fmt = sprintf "{0,%d}: {1} {2:x8} 0x{3:x}" fieldWidth
             AnsiConsole.MarkupLine( fmt,
                 objNo, objNameStr objName, crc, offset
             )
+        )

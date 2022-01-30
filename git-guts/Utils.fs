@@ -3,8 +3,33 @@ namespace git_guts
 open System
 open System.Text
 open System.IO
+open System.Diagnostics
 
 open Spectre.Console
+
+// --------------------------------------------------------------------
+
+type CaptureStdout () =
+    // Temporarily capture output sent to stdout.
+
+    // set up a buffer to capture stdout
+    let _writer = new StringWriter()
+    let _prevOut = System.Console.Out
+    let _prevAnsiConsole = AnsiConsole.Console.Profile.Out
+    do
+        System.Console.SetOut( _writer )
+        AnsiConsole.Console.Profile.Out <- new AnsiConsoleOutput( _writer )
+
+    interface IDisposable with
+        member this.Dispose() =
+            // clean up
+            System.Console.SetOut( _prevOut )
+            AnsiConsole.Console.Profile.Out <- _prevAnsiConsole
+            _writer.Dispose()
+
+    member this.getOutput =
+        // return the captured output
+        _writer.ToString()
 
 // --------------------------------------------------------------------
 
@@ -31,7 +56,31 @@ type StringBuilderBuf () =
 [<AutoOpen>]
 module Utils =
 
-    let disableSpectreCapabilities =
+    let runGit repoDir cmd args =
+        // run git and capture the output
+        let gitPath = "git" // nb: we assume this is on the PATH
+        let gitDir = Path.Combine( repoDir, ".git" )
+        let startInfo = ProcessStartInfo( FileName=gitPath, RedirectStandardOutput=true, UseShellExecute=false )
+        let addArg arg = startInfo.ArgumentList.Add( arg )
+        Seq.iter addArg [| "--git-dir"; gitDir; cmd |]
+        Seq.iter addArg args
+        let proc = Process.Start( startInfo )
+        let getBytes = Seq.initInfinite ( fun _ -> proc.StandardOutput.BaseStream.ReadByte() )
+        let output = getBytes |> Seq.takeWhile ( fun b -> b <> -1 ) |> Seq.map ( fun b -> byte(b) ) |> Seq.toArray
+        proc.WaitForExit()
+        if proc.ExitCode <> 0 then
+            failwithf "git failure: rc=%d" proc.ExitCode
+        output
+
+    let runGitText repoDir cmd args =
+        // run git and capture the output as text
+        Encoding.UTF8.GetString( runGit repoDir cmd args )
+
+    let runGitGc repoDir =
+        // run git garbage collection
+        runGit repoDir "gc" [] |> ignore
+
+    let disableSpectreCapabilities () =
         // disable colors (and other capabilities) in Spectre.Console
         AnsiConsole.Profile.Capabilities.ColorSystem <- ColorSystem.NoColors
         AnsiConsole.Profile.Capabilities.Ansi <- false
@@ -163,3 +212,18 @@ module Utils =
         // parse a timestamp
         let epoch = DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc )
         epoch.AddSeconds( float( tstamp ) )
+
+    let plural n val1 val2 =
+        // return a pluralized string
+        sprintf "%d %s" n ( if n = 1 then val1 else val2 )
+
+    let friendlyByteCount nBytes =
+        // return a friendly byte-count string
+        if nBytes < 1024L then
+            plural (int nBytes) "byte" "bytes"
+        else if nBytes < 1024L * 1024L then
+            sprintf "%.1f KB" ( float( nBytes ) / 1024.0 )
+        else if nBytes < 1024L * 1024L * 1024L then
+            sprintf "%.1f MB" ( float( nBytes ) / 1024.0 / 1024.0 )
+        else
+            sprintf "%.1f GB" ( float( nBytes ) / 1024.0 / 1024.0 / 1024.0 )

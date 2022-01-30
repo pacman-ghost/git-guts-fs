@@ -17,6 +17,7 @@
     <Compile Include="Refs.fs" />
     <Compile Include="Logs.fs" />
     <Compile Include="GitRepo.fs" />
+    <Compile Include="Verify.fs" />
   </ItemGroup>
 
   <ItemGroup>

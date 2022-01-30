@@ -120,6 +120,30 @@ type DumpLogsCommand() =
         dumpLogs settings.RepoDir
         0
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type VerifyObjectsSettings() =
+    inherit AppSettings()
+    [<CommandOption( "-p|--progress" )>]
+    member val Progress = false with get, set
+
+type VerifyObjectsCommand() =
+    inherit Command<VerifyObjectsSettings>()
+    override this.Execute( ctx, settings ) =
+        verifyObjects settings.RepoDir settings.Progress
+        0
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type VerifyLogsSettings() =
+    inherit AppSettings()
+
+type VerifyLogsCommand() =
+    inherit Command<VerifyLogsSettings>()
+    override this.Execute( ctx, settings ) =
+        verifyLogs settings.RepoDir
+        0
+
 // --------------------------------------------------------------------
 
 [<EntryPoint>]
@@ -129,7 +153,7 @@ let main argv =
     // colors (see ColorSystemDetector.Detect()), instead of checking if stdout is connected to a terminal,
     // so we do that here.
     if Console.IsOutputRedirected then
-        disableSpectreCapabilities
+        disableSpectreCapabilities ()
 
     // parse the command-line arguments
     let app = CommandApp<AppCommand>()
@@ -152,6 +176,12 @@ let main argv =
         ) |> ignore
         cfg.AddCommand<DumpLogsCommand>( "dump-logs" ).WithDescription(
             "Dump logs."
+        ) |> ignore
+        cfg.AddCommand<VerifyObjectsCommand>( "verify-objects" ).WithDescription(
+            "Verify retrieval of objects from a git repo."
+        ) |> ignore
+        cfg.AddCommand<VerifyLogsCommand>( "verify-logs" ).WithDescription(
+            "Verify logs in a git repo."
         ) |> ignore
     )
     app.Run( argv )

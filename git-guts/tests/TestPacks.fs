@@ -13,7 +13,7 @@ type TestPacks () =
     [<TestInitialize>]
     member this.init () =
         // prepare to run a test
-        disableSpectreCapabilities
+        disableSpectreCapabilities ()
 
     [<TestMethod>]
     member this.TestDumpPack () =
@@ -35,7 +35,7 @@ type TestPacks () =
                 let expectedFname =
                     let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".pack-data.txt"
                     Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-                cap.checkOutput expectedFname
+                checkCapturedOutput cap expectedFname
             )
 
             // dump the pack index file
@@ -45,7 +45,7 @@ type TestPacks () =
                 let expectedFname =
                     let fname = Path.GetFileNameWithoutExtension( zipFname ) + ".pack-index.txt"
                     Path.Combine( __SOURCE_DIRECTORY__, "fixtures", fname )
-                cap.checkOutput expectedFname
+                checkCapturedOutput cap expectedFname
             )
 
             // check that we can find each object name correctly
