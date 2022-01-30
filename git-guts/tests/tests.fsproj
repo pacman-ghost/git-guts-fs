@@ -10,7 +10,7 @@
   <ItemGroup>
     <Compile Include="Utils.fs" />
     <Compile Include="TestPacks.fs" />
-    <Compile Include="TestIndex.fs" />
+    <Compile Include="TestRefs.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

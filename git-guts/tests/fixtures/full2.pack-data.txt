@@ -1,0 +1,113 @@
+﻿--- OBJECT 0: commit (fpos=0xc, size=218) --------------------------------------
+
+tree 36c4c87ea568a6728a769586ecaac54a0cbee508
+parent de483a0a2160dc698967033f2c351208e6da9066
+author Taka <tutorial@git-guts> 1640749994 +0000
+committer Taka <tutorial@git-guts> 1640749994 +0000
+
+Changed the greeting.
+
+--- OBJECT 1: commit (fpos=0xa7, size=256) -------------------------------------
+
+tree b2029d7668b35e4bd3d9f661b6b89028943124f3
+parent fb407a730e3730eb07698f7ced84b596fe7fb7bd
+author Taka <tutorial@git-guts> 1640749030 +0000
+committer Taka <tutorial@git-guts> 1640749030 +0000
+
+Added a file with Unicode (日本) in its name and content.
+
+--- OBJECT 2: tag (fpos=0x16a, size=154) ---------------------------------------
+
+object 06d4e9c2beb2c23a955bdb213d02ac63e15e3318
+type commit
+tag annotated-tag
+tagger Taka <tutorial@git-guts> 1640750013 +0000
+
+This is an annotated tag.
+
+--- OBJECT 3: commit (fpos=0x1f2, size=217) ------------------------------------
+
+tree dda83875e2c2e9d5f31615a53280bb7ecca3c3f9
+parent 89bac892dbe3bc028ec2c361d836791f446ffc11
+author Taka <tutorial@git-guts> 1640749006 +0000
+committer Taka <tutorial@git-guts> 1640749006 +0000
+
+Added an empty file.
+
+--- OBJECT 4: commit (fpos=0x28c, size=217) ------------------------------------
+
+tree 4794689f37a386016b4c5bd6e6ba757410c31e2f
+parent de483a0a2160dc698967033f2c351208e6da9066
+author Taka <tutorial@git-guts> 1640748991 +0000
+committer Taka <tutorial@git-guts> 1640748991 +0000
+
+Added a binary file.
+
+--- OBJECT 5: commit (fpos=0x326, size=186) ------------------------------------
+
+tree 92dfd7467382cbb75e4e808fe62e7e2bca44f9f2
+author Taka <tutorial@git-guts> 1640748967 +0000
+committer Taka <tutorial@git-guts> 1640748967 +0000
+
+Added a file with spaces in its path.
+
+--- OBJECT 6: tree (fpos=0x3ac, size=141) --------------------------------------
+
+100644 818c71d03f435db011069584cda25c1f66af1a85 1x1.png
+040000 7d9872b3f8a2d8f1eca570e34203e1a530242e06 a subdir
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 empty
+100644 1072e024f685d47432c4d30abdbf4564eb42ba36 日本.txt
+
+--- OBJECT 7: tree (fpos=0x43e, size=43) ---------------------------------------
+
+100644 f75ba05f340c51065cbea2e1fdbfe5fe13144c97 hello world.txt
+
+--- OBJECT 8: tree (fpos=0x474, size=35) ---------------------------------------
+
+040000 f6fa0c3be2a987cc010b467aced34fdb7841e729 a subdir
+
+--- OBJECT 9: tree (fpos=0x4a0, size=43) ---------------------------------------
+
+100644 f967a9db1b6145568be7176f411f02dd174cc56c hello world.txt
+
+--- OBJECT 10: tree (fpos=0x4d5, size=103) -------------------------------------
+
+100644 818c71d03f435db011069584cda25c1f66af1a85 1x1.png
+040000 7d9872b3f8a2d8f1eca570e34203e1a530242e06 a subdir
+100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 empty
+
+--- OBJECT 11: tree (fpos=0x4e5, size=70) --------------------------------------
+
+100644 818c71d03f435db011069584cda25c1f66af1a85 1x1.png
+040000 7d9872b3f8a2d8f1eca570e34203e1a530242e06 a subdir
+
+--- OBJECT 12: tree (fpos=0x4f3, size=35) --------------------------------------
+
+040000 7d9872b3f8a2d8f1eca570e34203e1a530242e06 a subdir
+
+--- OBJECT 13: blob (fpos=0x520, size=119) -------------------------------------
+
+00000 | 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 | .PNG........IHDR
+00010 | 00 00 00 01 00 00 00 01 08 02 00 00 00 90 77 53 | ..............wS
+00020 | de 00 00 00 01 73 52 47 42 00 ae ce 1c e9 00 00 | .....sRGB.......
+00030 | 00 04 67 41 4d 41 00 00 b1 8f 0b fc 61 05 00 00 | ..gAMA......a...
+00040 | 00 09 70 48 59 73 00 00 0e c3 00 00 0e c3 01 c7 | ..pHYs..........
+00050 | 6f a8 64 00 00 00 0c 49 44 41 54 18 57 63 f8 ff | o.d....IDAT.Wc..
+00060 | ff 3f 00 05 fe 02 fe a7 35 81 84 00 00 00 00 49 | .?......5......I
+00070 | 45 4e 44 ae 42 60 82 .. .. .. .. .. .. .. .. .. | END.B`.         
+
+--- OBJECT 14: blob (fpos=0x594, size=14) --------------------------------------
+
+Hello, world.
+
+--- OBJECT 15: blob (fpos=0x5ab, size=0) ---------------------------------------
+
+
+--- OBJECT 16: blob (fpos=0x5b4, size=15) --------------------------------------
+
+japan = 日本
+
+--- OBJECT 17: blob (fpos=0x5cc, size=4) ---------------------------------------
+
+Yo!
+

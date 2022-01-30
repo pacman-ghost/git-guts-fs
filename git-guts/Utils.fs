@@ -36,6 +36,8 @@ module Utils =
         AnsiConsole.Profile.Capabilities.ColorSystem <- ColorSystem.NoColors
         AnsiConsole.Profile.Capabilities.Ansi <- false
         AnsiConsole.Profile.Capabilities.Links <- false
+        // FUDGE! Spectre.Console wraps output?!?!
+        AnsiConsole.Profile.Width <- 99999
 
     let safeSpectreString (str: string) =
         // escape characters that have meaning for Spectre
@@ -116,6 +118,10 @@ module Utils =
     let objNameStr objName =
         // return the object name display string
         "[yellow]" + objName + "[/]"
+
+    let refStr ref =
+        // return the ref display string
+        "[green]" + ref + "[/]"
 
     let pathStr path =
         // return the path display string

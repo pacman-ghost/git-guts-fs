@@ -62,3 +62,4 @@ type TestPacks () =
         doTest "simple.zip"
         doTest "license.zip"
         doTest "full.zip"
+        doTest "full2.zip"

@@ -98,6 +98,17 @@ type DumpStagingIndexCommand() =
         dumpStagingIndex settings.RepoDir settings.FullDump
         0
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type DumpRefsSettings() =
+    inherit AppSettings()
+
+type DumpRefsCommand() =
+    inherit Command<DumpRefsSettings>()
+    override this.Execute( ctx, settings ) =
+        dumpRefs settings.RepoDir
+        0
+
 // --------------------------------------------------------------------
 
 [<EntryPoint>]
@@ -124,6 +135,9 @@ let main argv =
         ) |> ignore
         cfg.AddCommand<DumpStagingIndexCommand>( "dump-stagingindex" ).WithDescription(
             "Dump the staging index."
+        ) |> ignore
+        cfg.AddCommand<DumpRefsCommand>( "dump-refs" ).WithDescription(
+            "Dump references."
         ) |> ignore
     )
     app.Run( argv )
