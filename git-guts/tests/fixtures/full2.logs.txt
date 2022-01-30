@@ -1,0 +1,57 @@
+--- HEAD -----------------------------------------------------------------------
+
+commit (initial): Added a file with spaces in its path.
+Taka (tutorial@git-guts) 2021-12-29 03:36:07 +0000
+-> de483a0a2160dc698967033f2c351208e6da9066
+
+commit: Added a binary file.
+Taka (tutorial@git-guts) 2021-12-29 03:36:31 +0000
+de483a0a2160dc698967033f2c351208e6da9066 -> 89bac892dbe3bc028ec2c361d836791f446ffc11
+
+commit: Added an empty file.
+Taka (tutorial@git-guts) 2021-12-29 03:36:46 +0000
+89bac892dbe3bc028ec2c361d836791f446ffc11 -> fb407a730e3730eb07698f7ced84b596fe7fb7bd
+
+commit: Added a file with Unicode (日本) in its name and content.
+Taka (tutorial@git-guts) 2021-12-29 03:37:10 +0000
+fb407a730e3730eb07698f7ced84b596fe7fb7bd -> 30c84cc603759f82470a119c5b5348001ab13500
+
+checkout: moving from master to a-branch
+Taka (tutorial@git-guts) 2021-12-29 03:52:26 +0000
+30c84cc603759f82470a119c5b5348001ab13500 -> de483a0a2160dc698967033f2c351208e6da9066
+
+commit: Changed the greeting.
+Taka (tutorial@git-guts) 2021-12-29 03:53:14 +0000
+de483a0a2160dc698967033f2c351208e6da9066 -> 06d4e9c2beb2c23a955bdb213d02ac63e15e3318
+
+checkout: moving from a-branch to master
+Taka (tutorial@git-guts) 2021-12-29 03:54:11 +0000
+06d4e9c2beb2c23a955bdb213d02ac63e15e3318 -> 30c84cc603759f82470a119c5b5348001ab13500
+
+--- refs/heads/a-branch --------------------------------------------------------
+
+branch: Created from de483a0a2160dc698967033f2c351208e6da9066
+Taka (tutorial@git-guts) 2021-12-29 03:52:26 +0000
+-> de483a0a2160dc698967033f2c351208e6da9066
+
+commit: Changed the greeting.
+Taka (tutorial@git-guts) 2021-12-29 03:53:14 +0000
+de483a0a2160dc698967033f2c351208e6da9066 -> 06d4e9c2beb2c23a955bdb213d02ac63e15e3318
+
+--- refs/heads/master ----------------------------------------------------------
+
+commit (initial): Added a file with spaces in its path.
+Taka (tutorial@git-guts) 2021-12-29 03:36:07 +0000
+-> de483a0a2160dc698967033f2c351208e6da9066
+
+commit: Added a binary file.
+Taka (tutorial@git-guts) 2021-12-29 03:36:31 +0000
+de483a0a2160dc698967033f2c351208e6da9066 -> 89bac892dbe3bc028ec2c361d836791f446ffc11
+
+commit: Added an empty file.
+Taka (tutorial@git-guts) 2021-12-29 03:36:46 +0000
+89bac892dbe3bc028ec2c361d836791f446ffc11 -> fb407a730e3730eb07698f7ced84b596fe7fb7bd
+
+commit: Added a file with Unicode (日本) in its name and content.
+Taka (tutorial@git-guts) 2021-12-29 03:37:10 +0000
+fb407a730e3730eb07698f7ced84b596fe7fb7bd -> 30c84cc603759f82470a119c5b5348001ab13500

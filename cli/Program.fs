@@ -109,6 +109,17 @@ type DumpRefsCommand() =
         dumpRefs settings.RepoDir
         0
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+type DumpLogsSettings() =
+    inherit AppSettings()
+
+type DumpLogsCommand() =
+    inherit Command<DumpLogsSettings>()
+    override this.Execute( ctx, settings ) =
+        dumpLogs settings.RepoDir
+        0
+
 // --------------------------------------------------------------------
 
 [<EntryPoint>]
@@ -138,6 +149,9 @@ let main argv =
         ) |> ignore
         cfg.AddCommand<DumpRefsCommand>( "dump-refs" ).WithDescription(
             "Dump references."
+        ) |> ignore
+        cfg.AddCommand<DumpLogsCommand>( "dump-logs" ).WithDescription(
+            "Dump logs."
         ) |> ignore
     )
     app.Run( argv )

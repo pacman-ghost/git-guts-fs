@@ -1,0 +1,19 @@
+--- HEAD -----------------------------------------------------------------------
+
+commit (initial): Added a greeting.
+Taka (tutorial@git-guts) 2021-12-29 03:19:03 +0000
+-> 2cccb4accf4fffcf9f6487a32b16750dfe298cc7
+
+commit: Added 2 files in a sub-directory.
+Taka (tutorial@git-guts) 2021-12-29 03:19:33 +0000
+2cccb4accf4fffcf9f6487a32b16750dfe298cc7 -> 828139d586d32cbe03dc4b32cfefe42e678a3f2e
+
+--- refs/heads/master ----------------------------------------------------------
+
+commit (initial): Added a greeting.
+Taka (tutorial@git-guts) 2021-12-29 03:19:03 +0000
+-> 2cccb4accf4fffcf9f6487a32b16750dfe298cc7
+
+commit: Added 2 files in a sub-directory.
+Taka (tutorial@git-guts) 2021-12-29 03:19:33 +0000
+2cccb4accf4fffcf9f6487a32b16750dfe298cc7 -> 828139d586d32cbe03dc4b32cfefe42e678a3f2e

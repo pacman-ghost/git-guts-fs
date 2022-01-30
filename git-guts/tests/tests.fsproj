@@ -11,6 +11,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="TestPacks.fs" />
     <Compile Include="TestRefs.fs" />
+    <Compile Include="TestLogs.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

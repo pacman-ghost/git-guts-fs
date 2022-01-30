@@ -15,6 +15,7 @@
     <Compile Include="Pack.fs" />
     <Compile Include="StagingIndex.fs" />
     <Compile Include="Refs.fs" />
+    <Compile Include="Logs.fs" />
     <Compile Include="GitRepo.fs" />
   </ItemGroup>
 
